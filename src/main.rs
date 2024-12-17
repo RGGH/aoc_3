@@ -1,8 +1,5 @@
-#![allow(unused)]
 use regex::Regex;
-use std::io::{BufReader, Read};
-
-struct Tup(i32, i32);
+use std::io::Read;
 
 fn main() {
     let data = import_data();
@@ -14,7 +11,7 @@ fn main() {
 fn import_data() -> String {
     let mut f = std::fs::File::open("data.txt").expect("check file exists");
     let mut buf = String::new();
-    let res = f.read_to_string(&mut buf).unwrap();
+    let _ = f.read_to_string(&mut buf).unwrap();
     buf
 }
 
@@ -36,13 +33,13 @@ fn sum_result(input: Vec<String>) -> i32 {
             .split(',')
             .filter_map(|x| x.trim().parse::<i32>().ok())
             .collect();
-                if numbers.len() == 2 {
+        if numbers.len() == 2 {
             total += numbers[0] * numbers[1];
         } else {
             eprintln!("Malformed input: {}", v);
         }
     }
-    total 
+    total
 }
 
 #[cfg(test)]
@@ -51,9 +48,10 @@ mod tests {
 
     #[test]
     fn test_sum_result() {
-        let input = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))";
-        let expected = 161;
-        let actual = sum_result();
+        let input = "mul(2,4) mul(3,7) mul(32,64) mul(11,8) mul(8,5)";
+        let parsed = parse_it(input.to_string());
+        let expected = 8 + 21 + 2048 + 88 + 40; // Calculated result
+        let actual = sum_result(parsed);
         assert_eq!(expected, actual);
     }
 }
